@@ -1,0 +1,132 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[polish]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern} 
+\usepackage{geometry}
+\geometry{a4paper, margin=2.5cm}
+
+\linespread{1.46557} 
+
+\renewcommand{\contentsname}{Spis treści}
+
+\begin{document}
+
+% --- STRONA 1: Strona tytułowa ---
+\begin{titlepage}
+    \linespread{1.0}\selectfont 
+    \centering
+    \vspace*{1cm}
+    
+    {\Large \textbf{Politechnika Warszawska} \par}
+    {\Large Wydział Elektryczny \par} 
+    
+    \vspace{1.5cm}
+    {\large Kierunek: Informatyka stosowana \par} 
+    {\large Przedmiot: Języki i metody programowania 2 \par}
+    
+    \vspace{2.5cm}
+    {\huge\bfseries Specyfikacja Funkcjonalna \par}
+    \vspace{0.5cm}
+    {\Large Projekt C: Wyznaczanie współrzędnych węzłów dla wizualizacji grafu planarnego \par}
+    
+    \vspace{3cm}
+    {\large \textbf{Autorzy:} \par}
+    Patryk Pawlak, Krzysztof Dębski \par
+    
+    \vfill
+    {\large Warszawa, \today \par}
+\end{titlepage}
+
+% --- STRONA 2: Spis treści ---
+\tableofcontents
+\newpage
+
+% --- STRONA 3: Opis i funkcjonalności ---
+\section{Cel projektu}
+Program służy do automatycznego wyznaczania współrzędnych $(x, y)$ wierzchołków grafu planarnego w celu jego czytelnej wizualizacji. Aplikacja przetwarza strukturę grafu podaną w postaci listy krawędzi na zestaw punktów na płaszczyźnie, wykorzystując algorytmy optymalizujące ułożenie węzłów (Fruchterman-Reingold oraz Twierdzenie Tutte'a). Dzięki temu krawędzie grafu stają się bardziej czytelne, a ewentualne przecięcia są minimalizowane.
+
+\section{Opis funkcji programu}
+Program realizuje następujące zadania:
+\begin{itemize}
+    \item Wczytywanie grafu podanego w postaci listy krawędzi z pliku tekstowego.
+    \item Walidacja struktury grafu (poprawność formatu i spójność).
+    \item Implementacja dwóch niezależnych algorytmów układania grafu:
+        \begin{itemize}
+            \item \textbf{Fruchterman-Reingold}: Metoda siłowa, symulująca oddziaływania fizyczne między węzłami.
+            \item \textbf{Twierdzenie Tutte'a}: Metoda barycentryczna, gwarantująca brak przecięć krawędzi dla określonej klasy grafów planarnych.
+        \end{itemize}
+    \item Zapisywanie obliczonych współrzędnych do pliku tekstowego lub binarnego (w zależności od wyboru użytkownika).
+    \item Wyświetlanie pomocy (\texttt{-h}) oraz logów diagnostycznych (tryb \textit{verbose}).
+\end{itemize}
+
+\section{Wymagania niefunkcjonalne}
+\begin{itemize}
+    \item Język implementacji: \textbf{C}.
+    \item Kompilacja: \texttt{GCC} z flagami \texttt{-Wall -pedantic}, zarządzana przez \texttt{Makefile}.
+    \item Zarządzanie pamięcią: Dynamiczna alokacja z kontrolą wycieków za pomocą narzędzia \texttt{Valgrind}.
+    \item Interfejs: Linia poleceń.
+\end{itemize}
+
+\newpage
+% --- STRONA 4: Sterowanie ---
+\section{Sterowanie programem (Argumenty CLI)}
+Aplikacja jest sterowana za pomocą flag przekazywanych podczas uruchamiania:
+\begin{itemize}
+    \item \textbf{-i <ścieżka>} (wymagany): Plik tekstowy z listą krawędzi.
+    \item \textbf{-o <ścieżka>} (opcjonalny): Plik wyjściowy ze współrzędnymi. Domyślnie: wypisanie na konsolę (stdout).
+    \item \textbf{-a <fr|tutte>} (opcjonalny): Wybór algorytmu:
+        \begin{itemize}
+            \item \texttt{fr} - Algorytm Fruchtermana-Reingolda (domyślny).
+            \item \texttt{tutte} - Twierdzenie Tutte'a o sprężynach.
+        \end{itemize}
+    \item \textbf{-n <liczba>} (opcjonalny): Liczba iteracji dla algorytmu FR (domyślne: 200).
+    \item \textbf{-b} (opcjonalny): Zmiana formatu wyjściowego na binarny.
+    \item \textbf{-v} (opcjonalny): Tryb \textit{verbose} - wyświetla postęp obliczeń (np. numer aktualnej iteracji).
+    \item \textbf{-h} (opcjonalny): Wyświetla instrukcję obsługi programu.
+\end{itemize}
+
+\vspace{0.5cm}
+\noindent \textbf{Przykład wywołania:} \\
+\texttt{./graph\_layout -i graf.txt -o wynik.txt -a tutte -v}
+
+\section{Format danych}
+\subsection{Plik wejściowy (tekstowy)}
+Format zgodny ze specyfikacją zadania:
+\begin{verbatim}
+<nazwa_krawędzi> <wierzchołek_A> <wierzchołek_B> <waga_krawędzi>
+\end{verbatim}
+
+\subsection{Plik wyjściowy (tekstowy/binarny)}
+Lista współrzędnych dla każdego unikalnego wierzchołka:
+\begin{verbatim}
+<wierzchołek> <współrzędna_x> <współrzędna_y>
+\end{verbatim}
+
+\newpage
+% --- STRONA 5: Testy i błędy ---
+\section{Sytuacje wyjątkowe i obsługa błędów}
+\begin{itemize}
+    \item \textbf{Błędy pliku (Kod 1):} Brak pliku wejściowego, brak uprawnień do zapisu.
+    \item \textbf{Błędy formatu (Kod 2):} Nieprawidłowa liczba kolumn w pliku, znaki niebędące liczbami w polach identyfikatorów lub wag.
+    \item \textbf{Błędy algorytmu (Kod 3):} Próba użycia algorytmu Tutte'a dla grafu, który nie jest spójny (wymagane przez matematyczną podstawę algorytmu).
+    \item \textbf{Błędy argumentów (Kod 4):} Podanie nieznanej flagi lub brak ścieżki po flagach \texttt{-i}/\texttt{-o}.
+\end{itemize}
+
+\section{Kryteria akceptacji}
+\begin{itemize}
+    \item Bezbłędna kompilacja poleceniem \texttt{make all}.
+    \item Poprawny format pliku wyjściowego, umożliwiający wczytanie danych przez zewnętrzną aplikację.
+    \item Całkowity brak wycieków pamięci (potwierdzony logiem z Valgrinda).
+\end{itemize}
+
+\section{Minimalne scenariusze testowe}
+\begin{enumerate}
+    \item \textbf{Test poprawności:} Wczytanie grafu z polecenia i sprawdzenie, czy każdy wierzchołek otrzymał współrzędne.
+    \item \textbf{Test stabilności FR:} Uruchomienie algorytmu Fruchtermana-Reingolda dla 100, 500 i 1000 iteracji.
+    \item \textbf{Test spójności dla Tutte'a:} Próba uruchomienia algorytmu Tutte'a dla grafu niespójnego i weryfikacja, czy program poprawnie wyświetli ostrzeżenie/błąd.
+
+\end{enumerate}
+
+\end{document}
