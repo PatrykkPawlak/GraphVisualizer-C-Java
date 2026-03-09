@@ -2,22 +2,22 @@
 #include <math.h>
 #include <stdlib.h>
 
-double oblicz_odleglosc(double x1,double y1,double x2,double y2){
+double calculate_distance(double x1,double y1,double x2,double y2){
     return sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
 }
-Wektor oblicz_wektor(double x1,double y1,double x2,double y2){
-    Wektor wynik;
-    double d=oblicz_odleglosc(x1,y1,x2,y2);
+Wektor calculate_vector(double x1,double y1,double x2,double y2){
+    Wektor result;
+    double d=calculate_distance(x1,y1,x2,y2);
     if(d==0.0){
-        wynik.x=0.0;
-        wynik.y=0.0;
-        return wynik;
+        result.x=0.0;
+        result.y=0.0;
+        return result;
     }
     double L_x=(x2-x1)/d;
     double L_y=(y2-y1)/d;
-    wynik.x=L_x;
-    wynik.y=L_y;
-    return wynik;
+    result.x=L_x;
+    result.y=L_y;
+    return result;
 }
 
 Matrix create_matrix(int size){
@@ -30,20 +30,35 @@ Matrix create_matrix(int size){
     return m;
 }
 void gauss_elimination(Matrix m,double *B,double *w){
-    double Best=m.values[0][0];
     for(int i=0;i<m.size;i++){
-        if(fabs(m.values[i][i+1])>Best){
+        int max_row=i;
+        for(int p=i+1;p<m.size;p++){
+        if(fabs(m.values[p][i])>fabs(m.values[max_row][i])){
+            max_row=p;
+        }
+        }
+        if(max_row!=i){
             double *temp_row=m.values[i];
-            m.values[i]=m.values[i+1];
-            m.values[i+1]=temp_row;
+            m.values[i]=m.values[max_row];
+            m.values[max_row]=temp_row;
             double temp_B=B[i];
-            B[i]=B[i+1];
-            B[i+1]=temp_B;
+            B[i]=B[max_row];
+            B[max_row]=temp_B;
         }
-        for(int j=0;i<m.size;j++){
-            double mnoznik=;
-
+        for(int j=i+1;j<m.size;j++){
+            double factor=m.values[j][i]/m.values[i][i];
+            for(int k=i;k<m.size;k++){
+                m.values[j][k]-=m.values[i][k]*factor;
+            }
+            B[j]-=B[i]*factor;
         }
+    }
+    for(int i=m.size-1;i>=0;i--){
+        double sum=0;
+        for(int j=m.size-1;j>i;j--){
+            sum+=w[j]*m.values[i][j];
+        }
+        w[i]=(B[i]-sum)/m.values[i][i];
     }
 }
 void free_matrix(Matrix m){
