@@ -4,14 +4,15 @@
 typedef struct{
     double x;
     double y;
-}wektor;
+} Wektor;
 typedef struct{
     int size;
     double **values;
-}Matrix;
+} Matrix;
 
-double oblicz_odleglosc(double x1,double y1,double x2,double y2);
-wektor oblicz_wektor(double x1,double y1,double x2,double y2);
+double calculate_distance(double x1,double y1,double x2,double y2);
+Wektor calculate_vector(double x1,double y1,double x2,double y2);
 Matrix create_matrix(int size);
+void gauss_elimination(Matrix m,double *B,double *w);
 void free_matrix(Matrix m);
 #endif
