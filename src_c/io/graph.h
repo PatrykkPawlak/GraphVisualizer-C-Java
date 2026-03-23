@@ -30,7 +30,7 @@ typedef struct {
   int edge_cap;
 } Graph;
 
-Graph *create_graph(void);
+Graph *graph_create(void);
 int graph_load_text(Graph *g, const char *path, int verbose);
 int graph_save_text(const Graph *g, const char *path);
 int graph_save_binary(const Graph *g, const char *path);
