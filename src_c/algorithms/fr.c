@@ -7,7 +7,7 @@
 #include <string.h>
 #include <time.h>
 
-void fr(Graph *g, int iterations, double width, double height) {
+void fr(Graph *g, int iterations, double width, double height, int verbose) {
   srand(time(NULL));
   if (g->node_count == 0)
     return;
@@ -23,7 +23,12 @@ void fr(Graph *g, int iterations, double width, double height) {
     g->nodes[v].x = (double)rand() / (double)RAND_MAX * width;
     g->nodes[v].y = (double)rand() / (double)RAND_MAX * height;
   }
+  if (verbose)
+    printf("Start algorytmu FR\n");
   for (int i = 0; i < iterations; i++) {
+    if (verbose && (i % 50 == 0))
+      printf("Algorytm FR: Iteracja %d/%d, temperatura: %lf\n", i, iterations,
+             temperature);
     memset(offset, 0, g->node_count * sizeof(Vector));
 
     for (int v = 0; v < g->node_count; v++) {
@@ -74,6 +79,7 @@ void fr(Graph *g, int iterations, double width, double height) {
     }
     temperature *= 0.95;
   }
+  printf("Algorytm FR: Zakończono!\n");
 
   free(offset);
 }
