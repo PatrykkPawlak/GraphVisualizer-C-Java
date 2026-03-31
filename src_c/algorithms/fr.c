@@ -15,7 +15,7 @@ void fr(Graph *g, int iterations, double width, double height) {
   if (!offset)
     return;
 
-  double temp = width / 10;
+  double temperature = width / 10;
 
   for (int i = 0; i < iterations; i++) {
     memset(offset, 0, g->node_count * sizeof(Vector));
@@ -55,6 +55,18 @@ void fr(Graph *g, int iterations, double width, double height) {
       offset[v] = vector_sub(offset[v], vector_mul(direction, force_val));
       offset[u] = vector_add(offset[u], vector_mul(direction, force_val));
     }
+    for (int v = 0; v < g->node_count; v++) {
+      Vector normalized = vector_normalize(offset[v]);
+      Vector res =
+          vector_mul(normalized, fmin(vector_mag(offset[v]), temperature));
+      g->nodes[v].x += res.x;
+      g->nodes[v].y += res.y;
+      g->nodes[v].x = fmin(g->nodes[v].x, width);
+      g->nodes[v].x = fmax(g->nodes[v].x, 0);
+      g->nodes[v].y = fmin(g->nodes[v].y, height);
+      g->nodes[v].y = fmax(g->nodes[v].y, 0);
+    }
+    temperature *= 0.95;
   }
 
   free(offset);
