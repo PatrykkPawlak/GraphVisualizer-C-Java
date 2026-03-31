@@ -3,6 +3,6 @@
 
 #include "../io/graph.h"
 
-void fr(Graph *g, int interactions, double width, double height);
+void fr(Graph *g, int iterations, double width, double height);
 
 #endif
