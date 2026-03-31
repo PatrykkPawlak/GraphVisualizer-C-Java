@@ -5,8 +5,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 void fr(Graph *g, int iterations, double width, double height) {
+  srand(time(NULL));
   if (g->node_count == 0)
     return;
   double ideal_dist = sqrt(height * width / (double)g->node_count);
@@ -17,6 +19,10 @@ void fr(Graph *g, int iterations, double width, double height) {
 
   double temperature = width / 10;
 
+  for (int v = 0; v < g->node_count; v++) {
+    g->nodes[v].x = (double)rand() / (double)RAND_MAX * width;
+    g->nodes[v].y = (double)rand() / (double)RAND_MAX * height;
+  }
   for (int i = 0; i < iterations; i++) {
     memset(offset, 0, g->node_count * sizeof(Vector));
 
