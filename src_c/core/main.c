@@ -1,3 +1,6 @@
+#define _POSIX_C_SOURCE 200809L
+#include "../algorithms/fr.h"
+#include "../algorithms/tutte.h"
 #include "../io/graph.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -54,12 +57,14 @@ int main(int argc, char *argv[]) {
     return ERR_FILE;
   }
 
-  if (verbose) {
-    if (strcmp(algorithm, "tutte") == 0) {
+  if (strcmp(algorithm, "tutte") == 0) {
+    if (verbose)
       printf("Algorytm: Tutte\n");
-    } else {
+    run_tutte(graph);
+  } else {
+    if (verbose)
       printf("Algorytm: FR (%d iteracji)\n", iterations);
-    }
+    fr(graph, iterations, 800, 600, verbose);
   }
 
   int result = (binary_output && output_path)
