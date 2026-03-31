@@ -25,7 +25,7 @@ Matrix create_matrix(int size) {
   m.size = size;
   m.values = malloc(size * sizeof(double *));
   for (int i = 0; i < size; i++) {
-    m.values[i] = malloc(size * sizeof(double));
+    m.values[i] = calloc(size, sizeof(double));
   }
   return m;
 }
